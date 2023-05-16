@@ -1,11 +1,12 @@
 import logging
 from typing import Optional
 
-from sqlalchemy import URL
+from sqlalchemy import URL, Result
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_scoped_session, async_sessionmaker, \
     create_async_engine
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
+from app.models import Question
 from app.schemas import ConfigEnv
 from db.base_class import Base
 
@@ -18,7 +19,7 @@ class Database:
         if cfg:
             self.URL_DB = URL.create(
                 drivername="postgresql+asyncpg",
-                host=cfg.db_user,
+                host=cfg.db_host,
                 database=cfg.db,
                 username=cfg.db_user,
                 password=cfg.db_pass,
@@ -47,7 +48,7 @@ class Database:
         except Exception as e:
             self.logger.info(f"Disconnect from engine error {e}")
 
-    async def execute_query(self, query):
+    async def execute_query(self, query) -> Result:
         async with self.session() as session:
             res = await session.execute(query)
             await session.commit()

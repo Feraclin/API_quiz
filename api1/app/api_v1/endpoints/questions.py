@@ -1,48 +1,56 @@
+from pprint import pprint
 from typing import List, TYPE_CHECKING
 
 import httpx as httpx
-from fastapi import HTTPException, APIRouter, FastAPI
-from sqlalchemy import select
+from fastapi import HTTPException, APIRouter
+from httpx import Response
+from sqlalchemy import select, Result
 
 from app.api_v1.deps import app_dependency
-from app.schemas import Question, QuestionRequest
+from app.schemas import QuestionSchema, QuestionRequest
 
 if TYPE_CHECKING:
-    from app.main import app as FastAPI
+    from app.main import Application
 
 router = APIRouter()
 
 
-@router.post("/questions", response_model=List[Question])
-async def generate_questions(questions_request: QuestionRequest):
+@router.post("/questions", response_model=List[QuestionSchema])
+async def generate_questions(questions_request: QuestionRequest, app=app_dependency):
     """
     Генерирует указанное количество вопросов, запрашивая их с публичного API.
     """
     num = questions_request.questions_num
-    url = f"https://jservice.io/api/random?count={num}"
 
-    async with httpx.AsyncClient() as client:
-        response = await client.get(url)
+    async def request_questions(num: int) -> Response:
+        async with httpx.AsyncClient() as client:
+            url = f"https://jservice.io/api/random?count={num}"
+            response = await client.get(url)
 
-        if response.status_code != 200:
-            raise HTTPException(status_code=response.status_code, detail="Ошибка при получении вопросов")
+            if response.status_code != 200:
+                raise HTTPException(status_code=response.status_code, detail="Ошибка при получении вопросов")
+            return response
 
-        data = response.json()
+    data_out: list[QuestionSchema] = []
 
-        return data
+    while num > 0:
+
+        data = (await request_questions(num)).json()
+        questions_list: List[QuestionSchema] = [QuestionSchema(**item) for item in data if item]
+        questions_list1 = [question for question in await app.state.question.add_list_question(questions_list) if question]
+        num -= len(questions_list1)
+        data_out.extend(questions_list1)
+    return data_out
 
 
-@router.get("/questions", response_model=List[Question])
-async def get_questions(page: int = 1, limit: int = 3, app: FastAPI = app_dependency):
+@router.get("/questions", response_model=List[QuestionSchema])
+async def get_questions(page: int = 1, limit: int = 3, app=app_dependency):
     """
     Получает вопросы из базы данных с пагинацией.
     """
-    # Calculate the offset based on the page and limit values
+
     offset = (page - 1) * limit
 
-    # Query the database to fetch questions with pagination
-    questions = await app.state.database.execute_query(
-        query=select().offset(offset).limit(limit)
-    )
+    questions = await app.state.question.get_questions_list(limit=limit, offset=offset)
 
     return questions

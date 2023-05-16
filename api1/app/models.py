@@ -1,7 +1,9 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import MappedAsDataclass, mapped_column, Mapped, relationship
+
+from app.schemas import QuestionSchema
 from db.base_class import Base
 
 
@@ -53,3 +55,24 @@ class Question(MappedAsDataclass, Base):
     game_id: Mapped[int] = mapped_column()
     invalid_count: Mapped[int] = mapped_column()
     category: Mapped[Category] = relationship(Category, lazy="joined", foreign_keys=[category_id])
+
+    @classmethod
+    def from_schema(cls, schema: QuestionSchema) -> "Question":
+        category = Category(id=schema.category.id,
+                            title=schema.category.title,
+                            created_at=schema.category.created_at.replace(tzinfo=None),
+                            updated_at=schema.category.updated_at.replace(tzinfo=None),
+                            clues_count=schema.category.clues_count)
+        question = Question(
+            id=schema.id,
+            answer=schema.answer,
+            question=schema.question,
+            value=schema.value,
+            airdate=schema.airdate.replace(tzinfo=None),
+            created_at=schema.created_at.replace(tzinfo=None),
+            updated_at=schema.updated_at.replace(tzinfo=None),
+            category_id=schema.category_id,
+            game_id=schema.game_id,
+            invalid_count=0,
+            category=category)
+        return question

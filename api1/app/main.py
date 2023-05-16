@@ -1,3 +1,5 @@
+from typing import Optional
+
 from fastapi import FastAPI
 
 from app.api_v1.deps import app_dependency
@@ -5,15 +7,21 @@ from app.api_v1.routers import api_router
 from app.config import config_api
 from app.schemas import ConfigEnv
 from db.base import Database
+from db.question_accessor import QuestionAccessor
 
 
 class AppState:
     def __init__(self):
-        self.database: Database = None
-        self.config: ConfigEnv = None
+        self.database: Optional[Database] = None
+        self.config: Optional[ConfigEnv] = None
+        self.question: Optional[QuestionAccessor] = None
 
 
-app = FastAPI()
+class Application(FastAPI):
+    state: Optional[AppState] = None
+
+
+app = Application()
 app.state = AppState()
 
 
@@ -24,6 +32,7 @@ async def startup_event():
     await database.connect()
     # Store the database instance in the app for dependency injection
     app.state.database = database
+    app.state.question = QuestionAccessor(database=app.state.database)
 
 
 @app.on_event("shutdown")

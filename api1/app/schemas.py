@@ -13,7 +13,7 @@ class Category(BaseModel):
     clues_count: int
 
 
-class Question(BaseModel):
+class QuestionSchema(BaseModel):
     id: int
     answer: str
     question: str
