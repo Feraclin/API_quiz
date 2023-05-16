@@ -1,0 +1,48 @@
+version: '3.5'
+
+services:
+
+  fluentd:
+    image: fluent/fluentd:v1.15-1
+    volumes:
+      - fluentd:/fluentd/conf:/fluentd/etc
+      - fluentd:/fluentd/logs:/fluentd/log
+    ports:
+      - "24224:24224"
+      - "24224:24224/udp"
+
+  db:
+    image: postgres
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - '5434:5432'
+    volumes:
+      - pgdata:/data
+    networks:
+      - bewise
+    depends_on:
+      - fluentd
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
+        tag: "{{.Name}}"
+
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - '6080:8080'
+    networks:
+      - bewise
+
+volumes:
+  pgdata:
+  fluentd:
+
+networks:
+  bewise:
+    driver: bridge

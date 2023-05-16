@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "quizapi"
+version = "0.1.0"
+description = "Request some questions from jservice.io"
+authors = ["Feraclin <feraclin@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = {extras = ["all"], version = "^0.95.1"}
+sqlalchemy = "^2.0.13"
+alembic = {extras = ["async"], version = "^1.11.0"}
+asyncpg = "^0.27.0"
+python-dotenv = "^1.0.0"
+python-multipart = "^0.0.6"
+api1 = {path = "./", develop = true}
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
