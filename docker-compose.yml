@@ -23,6 +23,19 @@ services:
     networks:
       - bewise
 
+  fast_api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    command: bash -c "poetry run uvicorn main:FastAPIApp --host 0.0.0.0 --port 8090 --reload"
+    env_file:
+      - .env
+    ports:
+      - '8090:8090'
+    networks:
+      - bewise
+
 volumes:
   pgdata:
 

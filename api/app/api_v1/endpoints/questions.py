@@ -10,7 +10,7 @@ from app.api_v1.deps import app_dependency
 from app.schemas import QuestionSchema, QuestionRequest
 
 if TYPE_CHECKING:
-    from app.main import Application
+    from app.app import Application
 
 router = APIRouter()
 

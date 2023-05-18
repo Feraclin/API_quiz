@@ -3,17 +3,40 @@ name = "musicconvertor"
 version = "0.1.0"
 description = "Convert wav to mp3"
 authors = ["Feraclin <feraclin@gmail.com>"]
-license = "MIT"
 readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.11"
-fastapi = "^0.95.1"
 sqlalchemy = "^2.0.13"
+fastapi = "^0.95.2"
+black = "^23.3.0"
+uvicorn = "^0.22.0"
+python-dotenv = "*"
+flake8 = "^6.0.0"
 alembic = {extras = ["async"], version = "^1.11.0"}
 asyncpg = "^0.27.0"
+python-multipart = "^0.0.6"
+docker-compose = "^1.29.2"
 
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 88
+target-version = ['py311']
+exclude = '''
+/(
+    \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+  | venv
+)/
+'''
