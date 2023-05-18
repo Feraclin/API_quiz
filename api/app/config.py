@@ -3,7 +3,7 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-from app.schemas import ConfigEnv
+from api.app.schemas import ConfigEnv
 
 env_name = ".env"
 

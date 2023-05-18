@@ -31,8 +31,13 @@ services:
     command: bash -c "poetry run uvicorn main:FastAPIApp --host 0.0.0.0 --port 8090 --reload"
     env_file:
       - .env
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_PORT=5432
     ports:
       - '8090:8090'
+    depends_on:
+      - db
     networks:
       - bewise
 
