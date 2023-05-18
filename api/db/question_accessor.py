@@ -1,13 +1,14 @@
 import logging
 from typing import TYPE_CHECKING
 
-from sqlalchemy import insert, select
+from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 
-from app.models import Question
-from app.schemas import QuestionSchema as QuestionSchema
+from api.app.models import Question
+from api.app.schemas import QuestionSchema as QuestionSchema
+
 if TYPE_CHECKING:
-    from db.base import Database
+    from api.db.base import Database
 
 
 class QuestionAccessor:
@@ -15,10 +16,11 @@ class QuestionAccessor:
         self.database: "Database" = database
         self.logger: logging.Logger = logging.getLogger("question_accessor")
 
-    async def add_list_question(self, lst: list[QuestionSchema]) -> list[bool | Question]:
+    async def add_list_question(
+        self, lst: list[QuestionSchema]
+    ) -> list[bool | Question]:
         questions = []
         for question_data in lst:
-
             question = Question.from_schema(question_data)
             print(question)
             question = await self.add_question(question=question)
@@ -36,6 +38,5 @@ class QuestionAccessor:
             await self.database.add_query(question)
             return question
         except IntegrityError as e:
-            print(e)
-            self.logger.error("%idx question already in base".format(idx=question.id))
+            self.logger.error(f"idx {question.id} already in base. Error: {e}")
             return False

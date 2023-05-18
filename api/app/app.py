@@ -2,12 +2,12 @@ from typing import Optional
 
 from fastapi import FastAPI
 
-from app.api_v1.deps import app_dependency
-from app.api_v1.routers import api_router
-from app.config import config_api
-from app.schemas import ConfigEnv
-from db.base import Database
-from db.question_accessor import QuestionAccessor
+from api.app.api_v1.deps import app_dependency
+from api.app.api_v1.routers import api_router
+from api.app.config import config_api
+from api.app.schemas import ConfigEnv
+from api.db.base import Database
+from api.db.question_accessor import QuestionAccessor
 
 
 class AppState:
@@ -42,7 +42,4 @@ async def shutdown_event():
         await database.disconnect()
 
 
-app.include_router(router=api_router,
-                   prefix="/api",
-                   dependencies=[app_dependency])
-
+app.include_router(router=api_router, prefix="/api", dependencies=[app_dependency])

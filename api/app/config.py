@@ -14,8 +14,10 @@ if os.path.isfile(dotenv_file):
     load_dotenv(dotenv_file)
 config_env = os.environ
 
-config_api = ConfigEnv(db_host=config_env.get("POSTGRES_HOST"),
-                   db_port=int(config_env.get("POSTGRES_PORT")),
-                   db_user=config_env.get("POSTGRES_USER"),
-                   db_pass=config_env.get("POSTGRES_PASSWORD"),
-                   db=config_env.get("POSTGRES_DB"))
+config_api = ConfigEnv(
+    db_host=config_env.get("POSTGRES_HOST"),
+    db_port=int(config_env.get("POSTGRES_PORT")),
+    db_user=config_env.get("POSTGRES_USER"),
+    db_pass=config_env.get("POSTGRES_PASSWORD"),
+    db=config_env.get("POSTGRES_DB"),
+)

@@ -1,14 +1,15 @@
 import logging
-from typing import Optional
 
 from sqlalchemy import URL, Result
-from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_scoped_session, async_sessionmaker, \
-    create_async_engine
-from sqlalchemy.orm import DeclarativeBase, sessionmaker
+from sqlalchemy.ext.asyncio import (
+    AsyncEngine,
+    async_sessionmaker,
+    create_async_engine,
+)
+from sqlalchemy.orm import DeclarativeBase
 
-from app.models import Question
-from app.schemas import ConfigEnv
-from db.base_class import Base
+from api.app.schemas import ConfigEnv
+from api.db.base_class import Base
 
 
 class Database:
@@ -27,9 +28,7 @@ class Database:
             )
         self.engine_: AsyncEngine | None = None
         self.db_: DeclarativeBase | None = None
-        self.session: AsyncSession | async_scoped_session | sessionmaker | async_sessionmaker | None = (
-            None
-        )
+        self.session: async_sessionmaker | None = None
         self.logger = logging.getLogger("database")
 
     async def connect(self, *_: list, **__: dict) -> None:
