@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 from fastapi import Depends, Request
 
 if TYPE_CHECKING:
-    from app.app import Application
+    from api.app.app import Application
 
 
 async def get_app(request: Request) -> "Application":

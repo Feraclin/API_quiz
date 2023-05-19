@@ -27,7 +27,6 @@ async def get_questions(page: int = 1, limit: int = 3, app=app_dependency):
     """
     Получает вопросы из базы данных с пагинацией.
     """
-
     offset = (page - 1) * limit
 
     questions = await app.state.question.get_questions_list(limit=limit, offset=offset)

@@ -8,6 +8,12 @@ from api.app.schemas import QuestionSchema
 
 
 async def request_questions(num: int) -> Response:
+    """
+    Запрашивает вопросы у внешнего API
+
+    :param num:
+    :return:
+    """
     async with httpx.AsyncClient() as client:
         url = f"https://jservice.io/api/random?count={num}"
         response = await client.get(url)
@@ -21,6 +27,14 @@ async def request_questions(num: int) -> Response:
 
 
 async def generate_question_list(app, data_out, num):
+    """
+    Запрашивает дополнительные вопросы в случае дубликатов
+
+    :param app:
+    :param data_out:
+    :param num:
+    :return:
+    """
     while num > 0:
         data = (await request_questions(num)).json()
         questions_list: List[QuestionSchema] = [

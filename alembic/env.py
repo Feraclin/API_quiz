@@ -35,6 +35,7 @@ url = f"postgresql+asyncpg://{config_api.db_user}:{config_api.db_pass}@{config_a
 
 config.set_main_option("sqlalchemy.url", url)
 
+
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.
 

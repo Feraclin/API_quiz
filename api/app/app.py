@@ -30,7 +30,7 @@ async def startup_event():
     app.state.config = config_api
     database = Database(app.state.config)
     await database.connect()
-    # Store the database instance in the app for dependency injection
+
     app.state.database = database
     app.state.question = QuestionAccessor(database=app.state.database)
 
